@@ -1,0 +1,7 @@
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\bin\Debug\DirectoryComparerUnitTests.dll
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\bin\Debug\DirectoryComparerUnitTests.pdb
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\bin\Debug\Directory Comparer.exe
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\bin\Debug\Directory Comparer.pdb
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\obj\Debug\DirectoryComparerUnitTests.dll
+C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\obj\Debug\DirectoryComparerUnitTests.pdb

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="5dd1e002-961c-432c-9b3e-bafc054ef0d3" name="Karthik@KARTHIK-PC 2011-12-02 16:18:21" runUser="Karthik-PC\Karthik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="cc6141c8-768d-4835-b193-866cb63e0e50">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="Karthik_KARTHIK-PC 2011-12-02 16_18_21">
+      <DeploymentItem filename="c:\users\karthik\documents\visual studio 2010\Projects\DirectoryComparer\DirectoryComparer\bin\Debug\DirectoryComparer.exe" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2011-12-02T16:18:21.7890014-05:00" queuing="2011-12-02T16:18:23.8331183-05:00" start="2011-12-02T16:18:24.0631315-05:00" finish="2011-12-02T16:18:25.0821897-05:00" />
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" error="0" failed="1" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="CheckDirectories" storage="c:\users\karthik\documents\visual studio 2010\projects\directorycomparer\directorycomparerunittests\bin\debug\directorycomparerunittests.dll" id="69092a76-076a-4a87-68a5-b95a0d7b405f">
+      <Execution id="0b6e62e6-5d45-4dc3-ad5c-1d68b3d2dec6" />
+      <TestMethod codeBase="c:/users/karthik/documents/visual studio 2010/Projects/DirectoryComparer/DirectoryComparerUnitTests/bin/Debug/DirectoryComparerUnitTests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="DirectoryComparerUnitTests.DirectoryListerTests, DirectoryComparerUnitTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="CheckDirectories" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="69092a76-076a-4a87-68a5-b95a0d7b405f" executionId="0b6e62e6-5d45-4dc3-ad5c-1d68b3d2dec6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="0b6e62e6-5d45-4dc3-ad5c-1d68b3d2dec6" testId="69092a76-076a-4a87-68a5-b95a0d7b405f" testName="CheckDirectories" computerName="KARTHIK-PC" duration="00:00:00.1837391" startTime="2011-12-02T16:18:24.2531423-05:00" endTime="2011-12-02T16:18:25.0211863-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b6e62e6-5d45-4dc3-ad5c-1d68b3d2dec6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;3&gt;. Actual:&lt;1&gt;. </Message>
+          <StackTrace>   at DirectoryComparerUnitTests.DirectoryListerTests.CheckDirectories() in c:\users\karthik\documents\visual studio 2010\Projects\DirectoryComparer\DirectoryComparerUnitTests\DirectoryListerTests.cs:line 18
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>
