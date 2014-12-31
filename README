@@ -1,7 +1,7 @@
 README
 -------
 
-Directory comparer, as the name implies, is a tool to compare folders. Directory comparer is extensible so you always have the option of creating your own comparers or own UI for representing the results of the default comparers provided.
+Directory comparer, as the name implies, is a tool to compare folders. Directory comparer is extensible so you always have the 
+option of creating your own comparers or own UI for representing the results of the default comparers provided.
 
-Website: http://comparer.thekfactor.info
 Author: Karthik Ananthapadmanaban
