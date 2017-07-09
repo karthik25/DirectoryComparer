@@ -19,6 +19,8 @@ namespace DirectoryComparer
     public partial class frmMain : Form
     {
         private frmCompareResults _frmCompareResults;
+        private int _progress;
+        private const int PROGRESS_STEP = 20;
 
         public frmMain()
         {
@@ -55,6 +57,8 @@ namespace DirectoryComparer
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            ClearProgress();
+
             string status = ValidateInputs();
 
             if (status != string.Empty)
@@ -89,7 +93,8 @@ namespace DirectoryComparer
             IDirectoryComparer recursiveComparer = new RecursiveDirectoryComparer(comparer);
             IResults results = recursiveComparer.CompareDirectories();
 
-            this.ReportProgress(100);
+            _progress = 100;
+            this.ReportProgress(_progress);
 
             Thread.Sleep(1000);
 
@@ -98,7 +103,13 @@ namespace DirectoryComparer
         
         public void ClearProgress()
         {
-            progressBar.Value = 0;
+            _progress = 0;
+            progressBar.Value = _progress;
+        }
+
+        public void AddStepProgress(int percentage = PROGRESS_STEP)
+        {  
+            comparerWorker.ReportProgress(_progress + percentage);
         }
 
         public void ReportProgress(int percentage)

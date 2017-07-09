@@ -11,3 +11,5 @@ C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\Directo
 C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparer\obj\x86\Debug\GenerateResource.write.1.tlog
 C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparer\obj\x86\Debug\Directory Comparer.exe
 C:\Users\Karthik\Documents\Visual Studio 2010\Projects\DirectoryComparer\DirectoryComparer\obj\x86\Debug\Directory Comparer.pdb
+C:\Users\nbraslav\Documents\Visual Studio 2015\Projects\DirectoryComparer\DirectoryComparer\obj\x86\Debug\Directory Comparer.exe
+C:\Users\nbraslav\Documents\Visual Studio 2015\Projects\DirectoryComparer\DirectoryComparer\obj\x86\Debug\Directory Comparer.pdb

@@ -20,28 +20,38 @@ namespace DirectoryComparer.Comparers
 
         public List<CompareResult> LeftCompare(string leftFolder, string rightFolder)
         {
-            List<CompareResult> _leftResults = new List<CompareResult>();
+            return Compare(leftFolder, rightFolder);
+        }
 
-            List<string> leftFiles = DirectoryLister.GetAllFiles(leftFolder);
-            List<string> rightFiles = DirectoryLister.GetAllFiles(rightFolder);
+        public List<CompareResult> RightCompare(string rightFolder, string leftFolder)
+        {
+            return Compare(rightFolder, leftFolder);
+        }
 
-            _reference.ReportProgress(15);
+        private List<CompareResult> Compare(string firstFolder, string secondFolder)
+        {
+            var results = new List<CompareResult>();
+
+            var leftFiles = DirectoryLister.GetAllFiles(firstFolder);
+            var rightFiles = DirectoryLister.GetAllFiles(secondFolder);
+
+            _reference.AddStepProgress();
 
             foreach (string fileOrFolder in leftFiles)
             {
                 if (fileOrFolder.IsFile())
                 {
-                    _leftResults.Add(ProcessFile(fileOrFolder, rightFiles, CompareDirection.Left));
+                    results.Add(ProcessFile(fileOrFolder, rightFiles, CompareDirection.Left));
                 }
                 else if (DirectoryComparerBaseInfo.Recursive)
                 {
-                    _leftResults.AddRange(ProcessFolder(fileOrFolder, rightFiles, CompareDirection.Left));
+                    results.AddRange(ProcessFolder(fileOrFolder, rightFiles, CompareDirection.Left));
                 }
             }
 
-            _reference.ReportProgress(50);
+            _reference.AddStepProgress();
 
-            return _leftResults;
+            return results;
         }
 
         private List<CompareResult> ProcessFolder(string fileOrFolder, List<string> otherFiles, CompareDirection direction)
@@ -183,45 +193,6 @@ namespace DirectoryComparer.Comparers
                 results.AddRange(ProcessFolder(fileOrFolder, _compareItems, direction));
             }
             return results;
-        }
-
-        public List<CompareResult> RightCompare(string rightFolder, string leftFolder)
-        {
-            List<CompareResult> _rightResults = new List<CompareResult>();
-
-            List<string> leftFiles = DirectoryLister.GetAllFiles(leftFolder);
-            List<string> rightFiles = DirectoryLister.GetAllFiles(rightFolder);
-
-            _reference.ReportProgress(70);
-
-            foreach (string fileOrFolder in rightFiles)
-            {
-                if (fileOrFolder.IsFile())
-                {
-                    CompareResult result = ProcessFile(fileOrFolder, leftFiles, CompareDirection.Right);
-                    if (IsNotPresent(result))
-                        _rightResults.Add(result);
-                }
-                else if (DirectoryComparerBaseInfo.Recursive)
-                {
-                    List<CompareResult> results = ProcessFolder(fileOrFolder, leftFiles, CompareDirection.Right);
-                    _rightResults.AddRange(GetRightOnly(results));
-                }
-            }
-
-            _reference.ReportProgress(90);
-
-            return _rightResults;
-        }
-
-        private bool IsNotPresent(CompareResult result)
-        {
-            return !(result.ExistsLeft && result.ExistsRight);
-        }
-
-        private List<CompareResult> GetRightOnly(List<CompareResult> results)
-        {
-            return results.Where(i => i.ExistsLeft != i.ExistsRight).ToList();
         }
     }
 }
