@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DirectoryComparer.Interfaces;
 
 namespace DirectoryComparer.Objects
 {
@@ -11,5 +12,6 @@ namespace DirectoryComparer.Objects
         public static string RightPath { get; set; }
         public static bool Recursive { get; set; }
         public static CompareResultsPreferences Preferences { get; set; }
+        public static ITwoPassComparer CompareStrategy { get; set; }
     }
 }

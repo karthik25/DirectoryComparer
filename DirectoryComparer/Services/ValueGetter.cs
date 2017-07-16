@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using DirectoryComparer.Objects;
@@ -10,6 +11,23 @@ namespace DirectoryComparer.Services
 {
     public static class ValueGetter
     {
+        public static string GetDescription(this Enum en) //ext method
+        {
+            Type type = en.GetType();
+
+            MemberInfo[] memInfo = type.GetMember(en.ToString());
+
+            if (memInfo != null && memInfo.Length > 0)
+            {
+                var attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute),false);
+
+                if (attrs?.Length > 0)
+                    return ((DescriptionAttribute)attrs[0]).Description;
+            }
+
+            return en.ToString();
+        }
+
         public static string GetValue(this CompareResult result, string fieldName)
         {
             Regex regex = new Regex(@"[ ]{1}", RegexOptions.None);
