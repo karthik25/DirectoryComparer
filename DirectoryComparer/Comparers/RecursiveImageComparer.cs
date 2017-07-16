@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using DirectoryComparer.Interfaces;
 using DirectoryComparer.Objects;
 using DirectoryComparer.Services;
 using System.IO;
+using System.Linq;
 
 namespace DirectoryComparer.Comparers
 {
@@ -20,179 +18,116 @@ namespace DirectoryComparer.Comparers
 
         public List<CompareResult> LeftCompare(string leftFolder, string rightFolder)
         {
-            return Compare(leftFolder, rightFolder);
+            _reference.ReportProgress(20);
+            var jpegA = DirectoryLister.GetJPGImages(leftFolder);
+            _reference.ReportProgress(25);
+            var jpegB = DirectoryLister.GetJPGImages(rightFolder);
+            _reference.ReportProgress(30);
+            var rawCanonA = DirectoryLister.GetRawCanonImages(leftFolder);
+            _reference.ReportProgress(35);
+            var rawCanonB = DirectoryLister.GetRawCanonImages(rightFolder);
+            _reference.ReportProgress(40);
+            var rawNikonA = DirectoryLister.GetRawNilonImages(leftFolder);
+            _reference.ReportProgress(45);
+            var rawNikonB = DirectoryLister.GetRawNilonImages(rightFolder);
+            _reference.ReportProgress(50);
+
+            _reference.ReportProgress(60);
+            var jpgResults = Compare(jpegA, jpegB);
+            _reference.ReportProgress(70);
+            var rawCanonResults = Compare(rawCanonA, rawCanonB);
+            _reference.ReportProgress(80);
+            var rawNilkonResults = Compare(rawNikonA, rawNikonB);
+            _reference.ReportProgress(90);
+
+            return jpgResults.Concat(rawCanonResults).Concat(rawNilkonResults).ToList();
         }
 
         public List<CompareResult> RightCompare(string rightFolder, string leftFolder)
         {
-            return Compare(rightFolder, leftFolder);
+            return new List<CompareResult>();
         }
 
-        private List<CompareResult> Compare(string firstFolder, string secondFolder)
+        private List<CompareResult> Compare(List<string> folderA, List<string> folderB)
         {
             var results = new List<CompareResult>();
 
-            var leftFiles = DirectoryLister.GetAllFiles(firstFolder);
-            var rightFiles = DirectoryLister.GetAllFiles(secondFolder);
+            var sideBWorkingSet = new List<string>();
+            folderB.ForEach(f => sideBWorkingSet.Add(f));
 
-            _reference.AddStepProgress();
-
-            foreach (string fileOrFolder in leftFiles)
+            // Go over all the images
+            foreach (var image in folderA)
             {
-                if (fileOrFolder.IsFile())
+                var imageIndex = LookForImages(image, folderB);
+
+                // Duplication found
+                results.AddRange(imageIndex.Select(i => new CompareResult()
                 {
-                    results.Add(ProcessFile(fileOrFolder, rightFiles, CompareDirection.Left));
-                }
-                else if (DirectoryComparerBaseInfo.Recursive)
+                    FileName = Path.GetFileName(image),
+                    LeftFilePath = image,
+                    LeftCreatedDate = File.GetCreationTime(image),
+                    LeftModifiedDate = File.GetLastWriteTime(image),
+                    Compared = true,
+                    ExistsLeft = true,
+                    ExistsRight = true,
+                    RightFilePath = folderB[i],
+                    Match = true,
+                    RightCreatedDate = File.GetCreationTime(folderB[i]),
+                    RightModifiedDate = File.GetLastWriteTime(folderB[i]),
+
+                }));
+
+                // Remove duplication from list B
+                foreach (var i in imageIndex.OrderByDescending(v => v))
+                    sideBWorkingSet.RemoveAt(i);
+
+                // Duplication was not found
+                if (imageIndex.Count <= 0)
                 {
-                    results.AddRange(ProcessFolder(fileOrFolder, rightFiles, CompareDirection.Left));
-                }
-            }
-
-            _reference.AddStepProgress();
-
-            return results;
-        }
-
-        private List<CompareResult> ProcessFolder(string fileOrFolder, List<string> otherFiles, CompareDirection direction)
-        {
-            List<CompareResult> results = new List<CompareResult>();
-
-            string dirName = '\\' + fileOrFolder.GetCurrentDir();
-            string correspondingDir = otherFiles.SingleOrDefault(r => r.IsDirectory() && r.EndsWith(dirName));
-            if (correspondingDir != null)
-            {
-                List<string> leftFiles = DirectoryLister.GetAllFiles(fileOrFolder);
-                List<string> cRightFiles = DirectoryLister.GetAllFiles(correspondingDir);
-
-                if (leftFiles.Count == 0 && cRightFiles.Count == 0)
-                {
-                    results.Add(ProcessEmptyDirectory(fileOrFolder, correspondingDir, direction));
-                }
-                else
-                {
-                    foreach (string fileorFolder in leftFiles)
+                    results.Add(new CompareResult()
                     {
-                        results.AddRange(ProcessByType(fileorFolder, cRightFiles, direction));
-                    }
+                        FileName = Path.GetFileName(image),
+                        LeftFilePath = image,
+                        LeftCreatedDate = File.GetCreationTime(image),
+                        LeftModifiedDate = File.GetLastWriteTime(image),
+                        Compared = true,
+                        ExistsLeft = true,
+                        ExistsRight = false,
+                    });
                 }
             }
-            else
-            {
-                List<string> files = DirectoryLister.GetAllFiles(fileOrFolder);
 
-                if (files.Count > 0)
+            // Files in list B but not in list A
+            foreach (var image in sideBWorkingSet)
+            {
+                var imageResult = new CompareResult()
                 {
-                    foreach (var file in files)
-                    {
-                        results.AddRange(ProcessByType(file, null, direction));
-                    }
-                }
-                else
-                {
-                    results.Add(ProcessEmptyDirectory(fileOrFolder, string.Empty, direction));
-                }
+                    FileName = Path.GetFileName(image),
+                    RightFilePath = image,
+                    RightCreatedDate = File.GetCreationTime(image),
+                    RightModifiedDate = File.GetLastWriteTime(image),
+                    Compared = true,
+                    ExistsLeft = false,
+                    ExistsRight = true
+                };
+
+                results.Add(imageResult);
             }
 
             return results;
         }
 
-        private CompareResult ProcessEmptyDirectory(string currentFolder, string correspondingFolder, CompareDirection direction)
+        private List<int> LookForImages(string image, List<string> lookIn)
         {
-            CompareResult result = new CompareResult();
-            result.FileName = string.Empty;
-            result.FileExtension = string.Empty;
+            var indexes = new List<int>();
 
-            if (direction == CompareDirection.Left)
+            for (var i = 0; i < lookIn.Count; i++)
             {
-                result.LeftFilePath = currentFolder;
-                result.RightFilePath = correspondingFolder;
-                result.LeftCreatedDate = currentFolder != string.Empty ? Directory.GetCreationTime(currentFolder) : DateTime.MinValue;
-                result.LeftModifiedDate = currentFolder != string.Empty ? Directory.GetLastWriteTime(currentFolder) : DateTime.MinValue;
-                result.RightCreatedDate = correspondingFolder != string.Empty ? Directory.GetCreationTime(correspondingFolder) : DateTime.MinValue;
-                result.RightModifiedDate = correspondingFolder != string.Empty ? Directory.GetLastWriteTime(correspondingFolder) : DateTime.MinValue;
-                result.ExistsLeft = currentFolder != string.Empty;
-                result.ExistsRight = correspondingFolder != string.Empty;
-            }
-            else
-            {
-                result.RightFilePath = currentFolder;
-                result.LeftFilePath = correspondingFolder;
-                result.RightCreatedDate = currentFolder != string.Empty ? Directory.GetCreationTime(currentFolder) : DateTime.MinValue;
-                result.RightModifiedDate = currentFolder != string.Empty ? Directory.GetLastWriteTime(currentFolder) : DateTime.MinValue;
-                result.LeftCreatedDate = correspondingFolder != string.Empty ? Directory.GetCreationTime(correspondingFolder) : DateTime.MinValue;
-                result.LeftModifiedDate = correspondingFolder != string.Empty ? Directory.GetLastWriteTime(correspondingFolder) : DateTime.MinValue;
-                result.ExistsRight = currentFolder != string.Empty;
-                result.ExistsLeft = correspondingFolder != string.Empty;
+                if (ImageServices.Compare(image, lookIn[i]))
+                    indexes.Add(i);
             }
 
-            result.Match = currentFolder != string.Empty && correspondingFolder != string.Empty;
-            result.Compared = true;
-
-            return result;
-        }
-
-        private CompareResult ProcessFile(string fileOrFolder, List<string> otherFiles, CompareDirection direction)
-        {
-            string file = otherFiles.SingleOrDefault(r => r.IsFile() && r.EndsWith('\\' + fileOrFolder.GetFileName()));
-            CompareResult result = file != null ? ProcessFileInternal(fileOrFolder, file, direction)
-                                                : ProcessFileInternal(fileOrFolder, string.Empty, direction);
-            return result;
-        }
-
-        private CompareResult ProcessFileInternal(string fileOrFolder, string file, CompareDirection direction)
-        {
-            CompareResult result = new CompareResult();
-            result.FileName = fileOrFolder.GetFileName();
-            result.FileExtension = fileOrFolder.GetFileExtension();
-
-            if (direction == CompareDirection.Left)
-            {
-                result.LeftFilePath = fileOrFolder;
-                result.LeftCreatedDate = File.GetCreationTime(fileOrFolder);
-                result.LeftModifiedDate = File.GetLastWriteTime(fileOrFolder);
-                result.LeftHash = file != string.Empty ? MD5Hash.HashFile(fileOrFolder) : string.Empty;
-                result.RightFilePath = file != string.Empty ? file : string.Empty;
-                result.RightCreatedDate = file != string.Empty ? File.GetCreationTime(file) : DateTime.MinValue;
-                result.RightModifiedDate = file != string.Empty ? File.GetLastWriteTime(file) : DateTime.MinValue;
-                result.RightHash = file != string.Empty ? MD5Hash.HashFile(file) : string.Empty;
-                result.ExistsLeft = true;
-                result.ExistsRight = file != string.Empty;
-            }
-            else
-            {
-                result.RightFilePath = fileOrFolder;
-                result.RightCreatedDate = File.GetCreationTime(fileOrFolder);
-                result.RightModifiedDate = File.GetLastWriteTime(fileOrFolder);
-                result.RightHash = file != string.Empty ? MD5Hash.HashFile(fileOrFolder) : string.Empty;
-                result.LeftFilePath = file != string.Empty ? file : string.Empty;
-                result.LeftCreatedDate = file != string.Empty ? File.GetCreationTime(file) : DateTime.MinValue;
-                result.LeftModifiedDate = file != string.Empty ? File.GetLastWriteTime(file) : DateTime.MinValue;
-                result.LeftHash = file != string.Empty ? MD5Hash.HashFile(file) : string.Empty;
-                result.ExistsRight = true;
-                result.ExistsLeft = file != string.Empty;
-            }
-
-            result.Match = file != string.Empty ? result.LeftHash == result.RightHash : false;
-            result.Compared = true;
-            result.IsFile = true;
-
-            return result;
-        }
-
-        private List<CompareResult> ProcessByType(string fileOrFolder, List<string> compareItems, CompareDirection direction)
-        {
-            List<string> _compareItems = compareItems ?? new List<string>();
-            List<CompareResult> results = new List<CompareResult>();
-            if (fileOrFolder.IsFile())
-            {
-                results.Add(ProcessFile(fileOrFolder, _compareItems, direction));
-            }
-            else
-            {
-                results.AddRange(ProcessFolder(fileOrFolder, _compareItems, direction));
-            }
-            return results;
+            return indexes;
         }
     }
 }

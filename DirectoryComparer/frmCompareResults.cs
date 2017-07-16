@@ -122,8 +122,8 @@ namespace DirectoryComparer
                     listItem.ImageIndex = 0;
 
                 listItem.SubItems.Add(item.GetFileOrFolderName());
-                listItem.SubItems.Add(item.LeftFilePath != string.Empty ? Path.GetDirectoryName(item.LeftFilePath) : string.Empty);
-                listItem.SubItems.Add(item.RightFilePath != string.Empty ? Path.GetDirectoryName(item.RightFilePath) : string.Empty);
+                listItem.SubItems.Add(item.LeftFilePath != string.Empty ? item.LeftFilePath : string.Empty);
+                listItem.SubItems.Add(item.RightFilePath != string.Empty ? item.RightFilePath : string.Empty);
                 listItem.SubItems.Add(GetMatchStatus(item));
 
                 List<ColumnItem> columnItems = DirectoryComparerBaseInfo.Preferences.Columns;
@@ -333,13 +333,13 @@ namespace DirectoryComparer
         private void openLeftFolderToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             string folderName = selectedItem.SubItems[2].Text.TrimEnd('\\') + '\\';
-            FileOrFolderActions.OpenFolder(folderName);
+            FileOrFolderActions.SelectFile(folderName);
         }
 
         private void openRightFolderToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             string folderName = selectedItem.SubItems[3].Text.TrimEnd('\\') + '\\';
-            FileOrFolderActions.OpenFolder(folderName);
+            FileOrFolderActions.SelectFile(folderName);
         }
 
         private void preferencesToolStripMenuItem_Click(object sender, EventArgs e)

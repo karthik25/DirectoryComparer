@@ -33,5 +33,41 @@ namespace DirectoryComparer.Services
 
             return filesAndFolders.ToList();
         }
+
+        public static List<string> GetJPGImages(string rootFolder)
+        {
+            if (!Directory.Exists(rootFolder))
+            {
+                throw new Exception("Root folder does not exist");
+            }
+
+            var jpg = Directory.GetFiles(rootFolder, "*.jpg", SearchOption.AllDirectories);
+
+            return jpg.ToList();
+        }
+
+        public static List<string> GetRawCanonImages(string rootFolder)
+        {
+            if (!Directory.Exists(rootFolder))
+            {
+                throw new Exception("Root folder does not exist");
+            }
+
+            var rowCanon = Directory.GetFiles(rootFolder, "*.CR2", SearchOption.AllDirectories);
+
+            return rowCanon.ToList();
+        }
+
+        public static List<string> GetRawNilonImages(string rootFolder)
+        {
+            if (!Directory.Exists(rootFolder))
+            {
+                throw new Exception("Root folder does not exist");
+            }
+
+            var rowNikon = Directory.GetFiles(rootFolder, "*.NEF", SearchOption.AllDirectories);
+
+            return rowNikon.ToList();
+        }
     }
 }

@@ -25,5 +25,14 @@ namespace DirectoryComparer.Services
             process.StartInfo.Arguments = folderName;
             process.Start();
         }
+
+        public static void SelectFile(string fileName)
+        {
+            string windir = Environment.GetEnvironmentVariable("WINDIR");
+            Process process = new Process();
+            process.StartInfo.FileName = windir + @"\\explorer.exe";
+            process.StartInfo.Arguments = "/select, \"" + fileName;
+            process.Start();
+        }
     }
 }
