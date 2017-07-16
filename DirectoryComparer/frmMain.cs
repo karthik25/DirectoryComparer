@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using DirectoryComparer.Objects;
 using System.IO;
@@ -30,6 +26,11 @@ namespace DirectoryComparer
             this.comparerWorker.DoWork += new DoWorkEventHandler(comparerWorker_DoWork);
             this.comparerWorker.ProgressChanged += new ProgressChangedEventHandler(comparerWorker_ProgressChanged);
             this.comparerWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(comparerWorker_RunWorkerCompleted);
+
+            comboBox_choose_strategy.DataSource = Enum.GetValues(typeof(FileCompareStrategy))
+                .Cast<Enum>().Select(v => v.GetDescription()).ToList();
+
+            DirectoryComparerBaseInfo.CompareStrategy = new RecursiveComparer(this);
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -89,7 +90,7 @@ namespace DirectoryComparer
 
         private void comparerWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            ITwoPassComparer comparer = new RecursiveComparer(this);
+            ITwoPassComparer comparer = DirectoryComparerBaseInfo.CompareStrategy;
             IDirectoryComparer recursiveComparer = new RecursiveDirectoryComparer(comparer);
             IResults results = recursiveComparer.CompareDirectories();
 
@@ -161,6 +162,29 @@ namespace DirectoryComparer
             CompareResultsPreferences prefs = GetPreferences();
             txtFolder1.Text = prefs.DefaultLeftPath;
             txtFolder2.Text = prefs.DefaultRightPath;
+        }
+
+        private void button_settings_Click(object sender, EventArgs e)
+        {
+            frmPreferences preferences = new frmPreferences();
+            preferences.ShowDialog();
+        }
+
+        private void comboBox_choose_strategy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = (FileCompareStrategy)comboBox_choose_strategy.SelectedIndex;
+
+            switch (selected)
+            {
+                case FileCompareStrategy.AnyFileCompare:
+                    DirectoryComparerBaseInfo.CompareStrategy = new RecursiveComparer(this);
+                    break;
+                case FileCompareStrategy.ImageCompare:
+                    DirectoryComparerBaseInfo.CompareStrategy = new RecursiveImageComparer(this);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

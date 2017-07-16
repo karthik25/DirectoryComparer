@@ -91,6 +91,7 @@
     <Compile Include="Interfaces\ITwoPassComparer.cs" />
     <Compile Include="Interfaces\IDirectoryComparer.cs" />
     <Compile Include="Interfaces\IResults.cs" />
+    <Compile Include="Objects\FileCompareStrategy.cs" />
     <Compile Include="Objects\ImageFormat.cs" />
     <Compile Include="Objects\CompareResult.cs" />
     <Compile Include="Objects\CompareResultsPreferences.cs" />

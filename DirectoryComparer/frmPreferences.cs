@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.IO;
 using DirectoryComparer.RegistryManager;
 using System.Diagnostics;
+using DirectoryComparer.Comparers;
+using DirectoryComparer.Services;
 
 namespace DirectoryComparer
 {
@@ -23,11 +25,13 @@ namespace DirectoryComparer
 
         private void frmPreferences_Load(object sender, EventArgs e)
         {
-            textBox1.Text = DirectoryComparerBaseInfo.Preferences.DefaultLeftPath;
-            textBox2.Text = DirectoryComparerBaseInfo.Preferences.DefaultRightPath;
+            textBox1.Text = DirectoryComparerBaseInfo.Preferences?.DefaultLeftPath;
+            textBox2.Text = DirectoryComparerBaseInfo.Preferences?.DefaultRightPath;
 
-            List<ColumnItem> columnItems = DirectoryComparerBaseInfo.Preferences.Columns;
+            List<ColumnItem> columnItems = DirectoryComparerBaseInfo.Preferences?.Columns;
             List<CheckBox> chkBoxes = GetCheckBoxes();
+
+            if (columnItems == null) return;
 
             foreach (var chkBox in chkBoxes)
             {
@@ -129,5 +133,6 @@ namespace DirectoryComparer
 
             System.Environment.Exit(0);
         }
+
     }
 }
